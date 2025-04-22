@@ -1,0 +1,13 @@
+version: '3'
+services:
+  banking-app:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+    environment:
+      - NODE_ENV=development
+      - JWT_SECRET=your-secret-key-change-in-production
+    restart: unless-stopped

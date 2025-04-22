@@ -24,7 +24,25 @@ router.post('/register', async (req, res) => {
     // Create new user
     const userId = await userOperations.createUser(username, password);
     
-    res.status(201).json({ success: true, message: 'Registration successful' });
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: userId, username: username },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    // Set cookie after registration (non-HttpOnly for demonstration)
+    res.cookie('authToken', token, {
+      maxAge: 3600000, // 1 hour
+      path: '/'
+    });
+    
+    res.status(201).json({ 
+      success: true, 
+      message: 'Registration successful',
+      userId: userId,
+      username: username
+    });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
@@ -58,7 +76,6 @@ router.post('/login', async (req, res) => {
     // VULNERABLE: Non-HttpOnly cookie for demonstration
     res.cookie('authToken', token, {
       maxAge: 3600000, // 1 hour
-      httpOnly: false, // INSECURE: Allows JavaScript access
       path: '/'
     });
     

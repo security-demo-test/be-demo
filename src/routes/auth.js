@@ -80,7 +80,7 @@ router.post('/login', async (req, res) => {
       username: user.username,
       token: token,  // Include token in response
       expiresIn: 3600, // Expiration in seconds
-      balance: user.balance || 0 // Include balance if available
+      balance: user.balance || undefined // Include balance if available
     });
 
   } catch (error) {

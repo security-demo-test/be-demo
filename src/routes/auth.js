@@ -30,18 +30,15 @@ router.post('/register', async (req, res) => {
       JWT_SECRET,
       { expiresIn: '1h' }
     );
-    
-    // Set cookie after registration (non-HttpOnly for demonstration)
-    res.cookie('authToken', token, {
-      maxAge: 3600000, // 1 hour
-      path: '/'
-    });
-    
+        
+    // Return token and user information in the response
     res.status(201).json({ 
       success: true, 
       message: 'Registration successful',
       userId: userId,
-      username: username
+      username: username,
+      token: token,  // Include token in response
+      expiresIn: 3600 // Expiration in seconds
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -75,13 +72,17 @@ router.post('/login', async (req, res) => {
       { expiresIn: '1h' }
     );
     
-    // VULNERABLE: Non-HttpOnly cookie for demonstration
-    res.cookie('authToken', token, {
-      maxAge: 3600000, // 1 hour
-      path: '/'
+    // Return token and user information in the response
+    res.json({ 
+      success: true, 
+      message: 'Login successful',
+      userId: user.id,
+      username: user.username,
+      token: token,  // Include token in response
+      expiresIn: 3600, // Expiration in seconds
+      balance: user.balance || 0 // Include balance if available
     });
-    
-    res.json({ success: true, message: 'Login successful' });
+
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ success: false, message: 'Server error' });

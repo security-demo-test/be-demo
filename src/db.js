@@ -2,6 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const { log } = require('console');
 
 // Ensure data directory exists
 const dataDir = path.resolve(__dirname, '../data');
@@ -84,6 +85,7 @@ const userOperations = {
   },
 
   findUserByUsername: (username) => {
+    log(`Finding user by username: ${username}`);
     return new Promise((resolve, reject) => {
       db.get(
         'SELECT * FROM users WHERE username = ?',

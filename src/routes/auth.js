@@ -52,6 +52,8 @@ router.post('/register', async (req, res) => {
 // Login endpoint
 router.post('/login', async (req, res) => {
   try {
+    console.log('Login request:', req.body); // Debugging line
+    
     const { username, password } = req.body;
     
     // Find user

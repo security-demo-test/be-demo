@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
@@ -10,19 +9,32 @@ const vulnerableRoutes = require('./routes/vulnerable');
 const app = express();
 const PORT = process.env.PORT || 80;
 
-// Middleware
-// app.use(cors({
-//   origin: function(origin, callback) {
-//     // Allow requests from any origin
-//     callback(null, true);
-//   },
-//   credentials: true, // Allow cookies to be sent with requests
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization']
-// }));
-
-// // Handle preflight requests
-// app.options('*', cors());
+app.use((req, res, next) => {
+  // Get the origin from the request headers
+  const origin = req.headers.origin;
+  
+  // Allow the specific origin that sent the request
+  // This is the key to allowing any origin while supporting credentials
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  // Allow credentials
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Allow all common methods
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  
+  // Allow all common headers
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(cookieParser());

@@ -12,12 +12,17 @@ const PORT = process.env.PORT || 80;
 
 // Middleware
 app.use(cors({
-  // Allow specific origins instead of '*' when using credentials
-  origin: ['*'], // Add your frontend URLs
+  origin: function(origin, callback) {
+    // Allow requests from any origin
+    callback(null, true);
+  },
   credentials: true, // Allow cookies to be sent with requests
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(bodyParser.json());
 app.use(cookieParser());
